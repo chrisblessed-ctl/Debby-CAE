@@ -1,0 +1,12 @@
+{
+  "name": "debby-cae-backend",
+  "version": "1.0.0",
+  "description": "Debby CAE backend powered by Ezra Technologies",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
