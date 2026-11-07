@@ -1,28 +1,18 @@
-// ==========================================
-// DEBBY CAE BACKEND
-// PROGRAMMED BY EZRA TECHNOLOGIES
-// ==========================================
-
-// Import Express
 const express = require("express");
+const { v2: cloudinary } = require("cloudinary");
 
-// Create our application
 const app = express();
-
-// Set the port
 const PORT = process.env.PORT || 3000;
 
-// Allow the server to receive JSON data
-app.use(express.json());
-
-// Allow larger image data temporarily
+// Request handling
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({
     extended: true,
     limit: "10mb"
 }));
 
 // ==========================================
-// BASIC HOME ROUTE
+// HOME
 // ==========================================
 
 app.get("/", (req, res) => {
@@ -30,7 +20,7 @@ app.get("/", (req, res) => {
 });
 
 // ==========================================
-// API STATUS ROUTE
+// API STATUS
 // ==========================================
 
 app.get("/api/status", (req, res) => {
@@ -40,6 +30,29 @@ app.get("/api/status", (req, res) => {
         developer: "Ezra Technologies",
         status: "Online"
     });
+});
+
+// ==========================================
+// CLOUDINARY CONNECTION TEST
+// ==========================================
+
+app.get("/api/cloudinary-status", async (req, res) => {
+    try {
+        const result = await cloudinary.api.ping();
+
+        res.json({
+            success: true,
+            message: "Cloudinary connected successfully!",
+            cloudinary: result.status
+        });
+    } catch (error) {
+        console.error("Cloudinary connection error:", error.message);
+
+        res.status(500).json({
+            success: false,
+            message: "Cloudinary connection failed."
+        });
+    }
 });
 
 // ==========================================
@@ -54,23 +67,20 @@ app.get("/api/products", (req, res) => {
     });
 });
 
-
 // ==========================================
 // GET A SINGLE PRODUCT
 // ==========================================
 
 app.get("/api/products/:id", (req, res) => {
-    const productId = req.params.id;
-
     res.json({
         success: true,
         message: "Single product endpoint is ready!",
-        productId: productId
+        productId: req.params.id
     });
 });
 
 // ==========================================
-// START THE SERVER
+// START SERVER
 // ==========================================
 
 app.listen(PORT, () => {
